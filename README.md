@@ -9,8 +9,8 @@ Each skill is self-contained: its own folder, its own frontmatter, its own READM
 | Skill | Description | Status |
 |---|---|---|
 | [social-preview-cards](skills/social-preview-cards/) | Builds on-brand social share preview images for a web project — a 1200x630 OpenGraph link-preview card and a 1080x1920 story card — by inspecting the codebase for its framework, palette, fonts, logo and avatar, then wiring up the metadata. | tested on Next.js 16.4.0 (partially tested elsewhere — see the skill README) |
-| [brand-logo-from-codebase](skills/brand-logo-from-codebase/) | Designs a logo mark, app icon, favicon or brand symbol for a project by reading its codebase for the name, purpose, palette, radius and tone, then either generating the SVG and its colorways or writing a ready-to-paste design prompt. | partially tested |
-| [logo-splash-animation](skills/logo-splash-animation/) | Builds an animated splash screen or loading intro for a project's logo — stroke draw-on, hard snaps, optional scanline — as standalone HTML or a React / Next.js component with Framer Motion. | partially tested |
+| [brand-logo-from-codebase](skills/brand-logo-from-codebase/) | Designs a logo mark, app icon, favicon or brand symbol for a project by reading its codebase for the name, purpose, palette, radius and tone, then either generating the SVG and its colorways or writing a ready-to-paste design prompt. | tested on hafizu-portfolio, Next.js 16.1.6 — GENERATE, lint, colorways and wiring verified; PROMPT mode unverified (see the skill QA notes) |
+| [logo-splash-animation](skills/logo-splash-animation/) | Builds an animated splash screen or loading intro for a project's logo — stroke draw-on, hard snaps, optional scanline — as standalone HTML or a React / Next.js component with Framer Motion. | tested on hafizu-portfolio, Next.js 16.1.6 — HTML and Framer Motion component verified; QA fixes applied (see the skill QA notes) |
 | [qa-test-cases](skills/qa-test-cases/) | Generates manual end-to-end QA cases from a code change or handoff, with observable results and a target build or source reference. | tested on synthetic handoffs and a portfolio route |
 
 ## Install
@@ -51,8 +51,8 @@ Any agent that loads `SKILL.md` files with YAML frontmatter works. Copy the skil
 Each skill folder has its own documentation:
 
 - [social-preview-cards README](skills/social-preview-cards/README.md) · [QA notes](skills/social-preview-cards/qa/README.md)
-- [brand-logo-from-codebase SKILL.md](skills/brand-logo-from-codebase/SKILL.md)
-- [logo-splash-animation SKILL.md](skills/logo-splash-animation/SKILL.md)
+- [brand-logo-from-codebase SKILL.md](skills/brand-logo-from-codebase/SKILL.md) · [QA notes](skills/brand-logo-from-codebase/qa/README.md)
+- [logo-splash-animation SKILL.md](skills/logo-splash-animation/SKILL.md) · [QA notes](skills/logo-splash-animation/qa/README.md)
 - [qa-test-cases README](skills/qa-test-cases/README.md) · [developer-to-QA workflow](skills/qa-test-cases/README.md#from-developer-to-qa)
 
 ## License

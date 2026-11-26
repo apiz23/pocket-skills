@@ -40,7 +40,7 @@ The script gives every shape a delay in document order: strokes draw on (`pathLe
 1. Sequence follows how the mark is built: structure/frame -> measurement/ticks -> signal -> accent last. The accent lands last and alone.
 2. Total 2.5-4s, played once. Click or a `replay()` hook replays it. Never loop a splash.
 3. Match the brand's motion language to its tokens: sharp/technical brands use linear or `cubic-bezier(.65,0,.35,1)` draws and `steps(1)` snaps; soft brands use ease-out and gentle springs. No bounces on a clinical brand.
-4. Optional single scanline sweep at the end for instrument-style brands. One effect per splash, not several.
+4. Optional single scanline sweep at the end for instrument-style brands. One effect per splash, not several. The scan starts at `--total + 0.1s` and runs ~1s, so `splash:done` lands about 1.3s after `--total` when it is enabled.
 5. No glow, blur, drop shadows, gradients, particles, or color changes beyond the logo's own palette.
 6. Respect `prefers-reduced-motion`: render the finished logo immediately.
 7. Expose completion: dispatch `splash:done` (HTML) or call `onDone` (component). Never navigate for the user unless asked.

@@ -40,8 +40,12 @@ def main():
     root = ET.parse(a.svg).getroot()
     shapes = []; collect(root, {}, None, shapes)
     n = len(shapes)
-    step = min(0.08, (a.total * 0.7) / max(n, 1))
-    dur = max(0.35, a.total * 0.2)
+    if n > 1:
+        step = min(0.25, (a.total * 0.6) / (n - 1))
+        dur = max(0.35, a.total - step * (n - 1))
+    else:
+        step = 0.0
+        dur = max(0.35, a.total)
     last = 0.0
 
     for i, (e, cur, parent) in enumerate(shapes):
@@ -63,7 +67,16 @@ def main():
         elif has_fill:
             e.set("class", "pop"); e.set("style", f"--t:{t}s")
 
-    vb = [float(x) for x in root.get("viewBox").split()]
+    vb_attr = root.get("viewBox")
+    if not vb_attr:
+        w = root.get("width", ""); h = root.get("height", "")
+        try:
+            w = float(w.rstrip("px")); h = float(h.rstrip("px"))
+        except ValueError:
+            raise SystemExit(f"annotate_svg.py: error: {a.svg} has no viewBox and no numeric width/height")
+        vb_attr = f"0 0 {w:g} {h:g}"
+        root.set("viewBox", vb_attr)
+    vb = [float(x) for x in vb_attr.split()]
     scan_at = round(last + 0.1, 2)
     if a.scan:
         stroke_color = next((c.get("stroke") for _, c, _ in shapes if not none(c.get("stroke"))), "#000")
