@@ -26,10 +26,10 @@ Assumptions: the evidence shows the fifth failed attempt locks the account for 1
 
 The quoted message is only valid because the code shows it. Without that evidence, write "a lockout message" and ask the exact text under Questions.
 
-The same case as a CSV row (one line, steps and results flattened, inner quotes doubled):
+The same case as a CSV row (one line, every cell quoted, steps and results flattened, inner quotes doubled):
 
 ```csv
-QA-001,Fifth failed sign-in shows the temporary lockout,High,Web,Use an unlocked test account with no prior failed attempts.,qa.user.1@example.test and an invalid test password.,"1. Open the sign-in page. 2. Submit four sign-in attempts with the invalid test password. 3. Submit a fifth sign-in attempt with the same invalid test password.","1. After step 3, the page shows ""Too many attempts. Try again in 15 minutes.""",Code,Not run
+"QA-001","Fifth failed sign-in shows the temporary lockout","High","Web","Use an unlocked test account with no prior failed attempts.","qa.user.1@example.test and an invalid test password.","1. Open the sign-in page. 2. Submit four sign-in attempts with the invalid test password. 3. Submit a fifth sign-in attempt with the same invalid test password.","1. After step 3, the page shows ""Too many attempts. Try again in 15 minutes.""","Code","Not run"
 ```
 
 ## Good case: two users
