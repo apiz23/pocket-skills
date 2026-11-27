@@ -1,67 +1,88 @@
 # Test case format
 
-For the default format, start the Markdown with a title, then **Summary**, **Questions**, **Security notes** (if any), and **Test cases**. In Summary, record the number of cases, **Target for testing**, and what was read. Include shared setup only where needed, such as a test account alias or a fixture shared by multiple cases. Flag unavailable prerequisites under Questions. Under Test cases, give each case its own subsection with the following fields in order.
+Start the Markdown with a title, then **Summary**, **Questions**, **Security notes** (if any), and **Test cases**.
 
-1. ID — temporary reference in this set of cases, starting at QA-001.
-2. Title — describe the behavior without relying on the ID.
-3. Priority — High for a blocked core workflow, access or data risk, or a failure that blocks the remaining checks. Medium for an important degraded workflow. Low for copy, layout, or other low-impact checks. Base priority on what happens to the user if the case fails.
-4. Platform — use the supported surface, such as Web, iOS or Android. Leave blank when the evidence does not identify it. Put a relevant viewport, browser, device or account state in Precondition.
-5. Precondition — the starting state and any case-specific prerequisites. Refer to shared setup by alias. If the case changes state, include a safe reset or cleanup when needed.
-6. Test Data — concrete synthetic inputs or reusable fixture aliases.
-7. Steps — numbered actions using visible labels and realistic navigation.
-8. Expected Result — numbered observations. Name the triggering step when the numbers do not align. For a refusal, name the visible message or state and any observable side effect that must not happen.
-9. Basis — Code, Spec or Unclear. Put unsupported claims in Questions.
-10. Status — Not run.
+In Summary, record:
+- the number of cases;
+- **Target for testing**;
+- **Evidence level** ("from code only" or "checked in a running build");
+- what was read;
+- shared setup (test account alias, fixture, env state) that several cases use.
+
+Give each case its own subsection. The heading carries the ID and Title: `### QA-001 — Title`. Do not repeat them as fields in Markdown. List Priority, Platform, Precondition and Test Data as bold one-line fields under the heading. Then give **Steps** and **Expected Result** as bold headings with numbered lists, then Basis and Status as one-line fields. references/example.md shows this layout. CSV keeps ID and Title as columns.
+
+1. **Priority** — see "Priority" below.
+2. **Platform** — Web, iOS, Android, Desktop app or Email. Leave blank when the evidence does not say. Put viewport, browser, device or account state in Precondition.
+3. **Precondition** — the starting state and any case-specific prerequisite. Refer to shared setup by alias. Define each alias once in Summary, such as "Deployment = the QA deployment that contains this commit". Add a safe reset when the case changes state. Add "Applies when: ..." if the case only holds in one env or config state.
+4. **Test Data** — concrete synthetic inputs or fixture aliases.
+5. **Steps** — numbered actions using visible labels and realistic navigation.
+6. **Expected Result** — numbered observations. Name the triggering step when numbers do not align. For a refusal, name the visible message or state and any side effect that must not happen.
+7. **Basis** — Code, Spec or Unclear. Put unsupported claims in Questions.
+8. **Status** — Not run.
+
+## Priority
+
+- **High:** a core workflow is blocked, access or data is at risk, or the failure blocks other checks.
+- **Medium:** an important workflow is degraded.
+- **Low:** copy, layout or other low-impact checks.
+
+Base priority on what happens to the user if the case fails. When two levels fit, choose the higher one. Cap at Medium for a surface that is not a core product workflow, such as a README badge, a preview page or a docs page, unless failure exposes data or blocks other cases.
 
 ## Target for testing
 
-State the evidence-backed app version, build number or release tag. Include the target environment and surface when known. If web and mobile use different builds, identify which one applies to each group. This is the intended target for the cases; their execution status stays Not run.
+State the app version, build number or release tag, plus the environment and surface, when the evidence gives them. If web and mobile use different builds, name the build for each group.
 
-If the app version or build is unknown, say so and use the best available reference: a commit SHA or merge commit, a branch or PR, a named requirement or spec revision, or an environment and route. Label each reference by what it is. A commit identifies the source reviewed; only say it is deployed when the evidence establishes that. If the build mapping is needed to run the cases, ask for it under Questions.
+If the build is unknown, say so and give the best reference, labelled by type: commit SHA, branch or PR, spec revision, or environment and route. A commit names the source reviewed. Call it deployed only when the evidence shows that. If QA needs the build mapping, ask for it under Questions.
 
 Examples:
-
 - **Target for testing:** App 1.4.2 (build 96), Android staging.
 - **Target for testing:** Build unknown. Source reviewed: `master` at `0b32bf9`; Web route: `/simple`. Questions: Which QA deployment contains this commit?
-- **Target for testing:** Version unknown. Scope: signed-out sign-in page on staging. Questions: Which build is deployed on staging?
 - **Target for testing:** Build unknown. Requirements: checkout handoff, revision 3. Questions: Which QA build implements this revision?
 
 ## Manual E2E scope check
 
-For each proposed case, ask whether QA can reach the starting point, perform the action through the supported product, and see the result with their available setup. Use a browser, app, accessible test inbox or device notification when the evidence calls for it. Credentials are represented by fixture aliases, never values.
+For each proposed case, ask: can QA reach the start, do the action through the product, and see the result with their setup? Credentials appear as fixture aliases, never values.
 
-- **API, database, or background job change:** test the visible journey that calls it and the visible result that changes. If the handoff only asks for an endpoint response, logs, a database check, or a private flag, put it under **Questions** as **Technical verification**. Ask the developer for an automated check or a reproducible user-facing path. If the requester explicitly wants direct API testing and confirms the access and tools, treat that as a separately scoped technical check.
-- **Version or dependency update:** name the affected feature or user path before selecting a smoke or regression case. Verify the app version in the UI only when there is an actual user-facing version display or upgrade behavior to check. If the only known change is a version string, lockfile or build metadata, ask which user path is at risk or what CI verifies. Use zero manual cases when none are supported.
-- **Missing access or setup:** if testing needs an unreleased build, an admin-only setup, a second device, a test inbox, a clock control or a special account, name the prerequisite and ask the owner to provide it. Keep it out of the runnable list until the required setup is available. Never add a guess or a direct production data change to make the case runnable.
+- **API, database or background job change:** test the visible journey that calls it and the visible result. If the handoff only asks for an endpoint response, logs, a database check or a private flag, list it under Questions as **Technical verification** and ask for an automated check or a user-facing path. Treat direct API testing as a separate technical check only when the requester asks for it and confirms access and tools.
+- **Endpoint that returns something a user sees** (an image, a page, a download): opening its URL in a browser is a valid manual case. Say in Precondition how users reach it, such as "embedded in a README". If only the embed route is a real user path, say that under Questions.
+- **Dynamic or rendered text:** for values that change (clock time, counts from live data), write the pattern, such as "a time in HH:MM form followed by 'local'". Do not invent a value. For text drawn into an image, quote the string from code. Check which strings the renderer transforms (uppercase, truncation). Add "may display in uppercase" only to those strings, and leave the rest as written. Do not claim exact casing or layout without a build check.
+- **Expected value unknown to you** (a version, a count from live data): do not write "ask the developer" inside an Expected Result. Write the pattern in the result, and put the question in Questions. Hold the case until the owner gives the value only if the pattern alone cannot show a pass or fail.
+- **Hard-coded text beside shared data** (a header count next to a list, copy that repeats a value from code): if the two could drift apart, list it under Questions as **Drift risk** with the file name. Add a case only when the current build shows a visible mismatch.
+- **Version or dependency update:** name the affected user path before choosing a case. Check a version in the UI only when the UI shows one. If only a version string, lockfile or build metadata changed, ask which user path is at risk or what CI covers. Use zero cases if none is supported.
+- **Docs, comments or config-example edits:** no manual case. Mention them in Summary only if they change a visible default.
+- **Env or config dependent behavior:** do not open secret files. Write one case per state that matters, with "Applies when: ..." in Precondition. Keep the case in the runnable list when QA can check or set that state. Ask under Questions which state the QA environment has. If QA cannot know or set the state, move the case to Questions.
+- **Missing access or setup** (unreleased build, admin setup, second device, test inbox, clock control, special account): name the prerequisite and ask the owner. Keep the case out of the runnable list until setup exists. Never guess, and never change production data to make a case runnable.
 
-## Choose coverage that helps QA
+## Choose coverage
 
-- Start with affected user goals. Cover the normal path and one likely failure or boundary when they matter. For a limit, select the nearest useful values around it. Keep the exact limit and timing grounded in evidence.
-- Exercise a relevant contrast when it could change the result: allowed and restricted access, enabled and disabled settings, new and returning state, or a supported device or locale. Group variants that share steps and results. Split variants with different setup or outcomes. Keep a matrix optional for larger handoffs.
-- Add a nearby regression only if the change touches its path. Start a short smoke check first when other cases depend on the feature opening or loading. Note known overlap or an important excluded scenario under Questions instead of claiming it passed elsewhere.
-- Describe timing, retries, external dependencies and cleanup only when they are relevant. Keep every included case Not run. Do not ask QA to guess a delay or manipulate internal state.
-- Use shared aliases for multi-user workflows (for example, Sender A and Recipient B). Say who acts and who observes the result. An optional team's template can add run or sign-off fields, but keep execution results separate from expected results.
+- Start with the affected user goal. Add one likely failure or boundary when it matters. For a limit, test the nearest useful values on each side. Keep exact limits and timing grounded in evidence.
+- Add a contrast only when it can change the result: allowed and restricted access, enabled and disabled setting, new and returning state, device or locale.
+- Group variants that share steps and results. Split variants with different setup or outcomes. Near-identical variants, such as several badge kinds or pages, get one case each when their data source, env state or expected text differs. Group them in one case only when steps and results are the same except for a name.
+- Add a regression case only when the change touches that path. Note known overlap or an excluded scenario under Questions. Do not claim it passed elsewhere.
+- Describe timing, retries, external dependencies and cleanup only when relevant. Never ask QA to guess a delay or manipulate internal state.
+- For multi-user flows, use aliases (Sender A, Recipient B). Say who acts and who observes.
+- A team template may add run or sign-off fields. Keep execution results apart from expected results.
 
-## Temporary IDs
+## IDs and CSV
 
-Finalize the case order before numbering. Assign QA-001, QA-002, QA-003 and so on, once each within this set of cases. If cases are reordered while drafting, number them in the final order. When reproducing the same finalized set in another format, keep its assigned IDs and case order. Use a heading such as `### QA-001 — Open the portfolio without a splash screen`.
+Finalize the order, then number from QA-001. Reuse the same IDs and order in every format. Use a heading like `### QA-001 — Open the portfolio without a splash screen`.
 
-Prefer the title in reviews and discussions. Decide whether cases overlap by comparing their purpose, steps and expected results. The ID is just a reference within this set. If a team imports the cases, the destination may assign its own permanent IDs and optionally map the temporary ones. Keep the title and content independent of the ID. Generated IDs must never serve as database primary keys or reuse identifiers from external QA systems. Always use the QA prefix, regardless of project.
+The ID is a reference inside this set only. A destination tool may assign permanent IDs. Never use these IDs as primary keys or reuse an external tool's IDs. Always use the QA prefix. Keep titles and content independent of the ID.
 
-Use the same cases in Markdown and CSV. Replace slashes in the branch name with hyphens for all filenames. The CSV header is exactly:
+Replace slashes in the branch name with hyphens in filenames. The CSV header is exactly:
 
 ```csv
 ID,Title,Priority,Platform,Precondition,Test Data,Steps,Expected Result,Basis,Status
 ```
 
-Put each numbered list in one cell, such as `1. Open the page. 2. Enter the email.` Quote any cell containing a comma or a quote and double any quote inside a quoted cell.
+Put each numbered list in one cell, on one line, like `1. Open the page. 2. Enter the email.` Keep the "After step N" wording and the exact text of every result. Do not add line breaks. Quote any cell with a comma or quote, and double inner quotes.
 
-These fields are defaults. When a team supplies a requested format, use its fields and labels while preserving runnable steps, observable results, grounded coverage and a clear unexecuted status. Keep all requested formats aligned on cases, order and temporary references.
+When a team supplies its own format, use its fields and labels. Keep runnable steps, observable results and the "Not run" status.
 
 ## Optional HTML and PDF
 
-Use the same finalized cases, IDs, order, fields and Not run statuses in every format. Include the Summary and target in HTML and PDF. Keep the default CSV schema unchanged; the target stays in the accompanying handoff. For HTML, save `qa-cases-<branch>.html` as a standalone document. Use a clear heading per case, numbered lists for steps and results, and simple styles that wrap at narrow widths. Escape text and attribute values from supplied evidence. Keep styles embedded and omit scripts, remote fonts and other external dependencies.
+Use the same cases, IDs, order, fields and statuses as Markdown. Include Summary and target.
 
-When the developer requests a project-themed export, read the theme of the surface under test. Reuse its color, typography and layout cues where they suit a readable QA handoff. Use local font fallbacks when needed to keep the file standalone. If the codebase has no usable theme, use simple neutral styling.
-
-If a PDF is requested, print the same HTML to `qa-cases-<branch>.pdf` using an available local browser or PDF tool. Provide print styles for legible text and comfortable margins. Keep case headings with their first lines and allow long cases to flow across pages. Verify that the resulting PDF contains the first and last cases. If no PDF tool is available, provide the print-ready HTML and explain how to save it as PDF from the browser.
+- **HTML:** save `qa-cases-<branch>.html` as a standalone file. Use one heading per case and numbered lists for steps and results. Use embedded styles that wrap at narrow widths. Escape text taken from evidence. No scripts, remote fonts or external files.
+- **Themed export:** only when asked. Read the theme of the surface under test and reuse its color, type and layout cues where they keep the page readable. Use local font fallbacks. With no usable theme, use neutral styling.
+- **PDF:** print the same HTML to `qa-cases-<branch>.pdf` with a local browser or PDF tool. Use print styles with legible text and margins. Keep each case heading with its first lines. Check that the first and last cases appear. If no PDF tool exists, give the print-ready HTML and say how to save it as PDF from a browser.
