@@ -75,7 +75,7 @@ Replace slashes in the branch name with hyphens in filenames. The CSV header is 
 ID,Title,Priority,Platform,Precondition,Test Data,Steps,Expected Result,Basis,Status
 ```
 
-Put each numbered list in one cell, on one line, like `1. Open the page. 2. Enter the email.` Keep the "After step N" wording and the exact text of every result. Do not add line breaks. Quote any cell with a comma or quote, and double inner quotes.
+Put each numbered list in one cell, on one line, like `1. Open the page. 2. Enter the email.` Keep the "After step N" wording and the exact text of every result. Do not add line breaks. Wrap every cell in double quotes, even short ones, and double any quote inside a cell. A comma in an unquoted cell splits the row and breaks the import. Every row must have exactly 10 cells.
 
 When a team supplies its own format, use its fields and labels. Keep runnable steps, observable results and the "Not run" status.
 
