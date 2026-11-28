@@ -4,7 +4,7 @@
 Usage: python3 -I lint_cases.py OUTPUT_FILE [EVAL_ID]
 
 The output file holds the Markdown cases and the CSV block. Checks that need no judgment:
-  - CSV header is exact and every row has 10 columns
+  - CSV header is exact (quoted or unquoted) and every row has 10 columns
   - IDs run QA-001, QA-002 ... with no gaps
   - Priority is High, Medium or Low; Basis is Code, Spec or Unclear; Status is 'Not run'
   - Steps and Expected Result are not empty
@@ -65,7 +65,10 @@ def main() -> int:
         fails.append("no ```csv block found")
     else:
         lines = block.splitlines()
-        if not lines or lines[0].strip() != HEADER:
+        # Parse the header so a quoted or unquoted header both pass. Both import
+        # correctly, and format.md tells the agent to quote every cell.
+        header_row = next(csv.reader([lines[0]]), []) if lines else []
+        if header_row != HEADER.split(","):
             fails.append("CSV header is not exact")
         else:
             reader = csv.reader(io.StringIO("\n".join(lines[1:])))

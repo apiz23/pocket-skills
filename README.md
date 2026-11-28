@@ -12,6 +12,7 @@ Each skill is self-contained: its own folder, its own frontmatter, its own READM
 | [brand-logo-from-codebase](skills/brand-logo-from-codebase/) | Designs a logo mark, app icon, favicon or brand symbol for a project by reading its codebase for the name, purpose, palette, radius and tone, then either generating the SVG and its colorways or writing a ready-to-paste design prompt. | tested on hafizu-portfolio, Next.js 16.1.6 — GENERATE, lint, colorways and wiring verified; PROMPT mode unverified (see the skill QA notes) |
 | [logo-splash-animation](skills/logo-splash-animation/) | Builds an animated splash screen or loading intro for a project's logo — stroke draw-on, hard snaps, optional scanline — as standalone HTML or a React / Next.js component with Framer Motion. | tested on hafizu-portfolio, Next.js 16.1.6 — HTML and Framer Motion component verified; QA fixes applied (see the skill QA notes) |
 | [qa-test-cases](skills/qa-test-cases/) | Generates manual end-to-end QA cases from a code change or handoff, with observable results and a target build or source reference. | tested on synthetic handoffs and a portfolio route |
+| [qa-bug-report](skills/qa-bug-report/) | Turns a rough bug note, log excerpt or failed test case into a clean, reproducible report, with exact quotes, redacted secrets and explicit gaps instead of guesses. | tested on synthetic notes and 10 eval cases |
 
 ## Install
 
@@ -25,6 +26,7 @@ cp -R skills/social-preview-cards ~/.claude/skills/
 cp -R skills/brand-logo-from-codebase ~/.claude/skills/
 cp -R skills/logo-splash-animation ~/.claude/skills/
 cp -R skills/qa-test-cases ~/.claude/skills/
+cp -R skills/qa-bug-report ~/.claude/skills/
 ```
 
 Then start (or restart) Claude Code and ask for the task in plain language — the `name` and `description` fields in the frontmatter drive discovery.
@@ -38,6 +40,7 @@ cd skills
 zip -r social-preview-cards.skill social-preview-cards
 zip -r brand-logo-from-codebase.skill brand-logo-from-codebase
 zip -r logo-splash-animation.skill logo-splash-animation
+zip -r qa-bug-report.skill qa-bug-report
 ```
 
 Upload each `<name>.skill` in claude.ai under Settings → Capabilities → Skills. The zips must keep the bundle contents (`SKILL.md`, `scripts/`, `assets/`, `references/`) at the archive root, as above.
@@ -54,6 +57,7 @@ Each skill folder has its own documentation:
 - [brand-logo-from-codebase SKILL.md](skills/brand-logo-from-codebase/SKILL.md) · [QA notes](skills/brand-logo-from-codebase/qa/README.md)
 - [logo-splash-animation SKILL.md](skills/logo-splash-animation/SKILL.md) · [QA notes](skills/logo-splash-animation/qa/README.md)
 - [qa-test-cases README](skills/qa-test-cases/README.md) · [developer-to-QA workflow](skills/qa-test-cases/README.md#from-developer-to-qa)
+- [qa-bug-report README](skills/qa-bug-report/README.md) · [eval suite](skills/qa-bug-report/evals/README.md)
 
 ## License
 
